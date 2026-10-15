@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ParkSpace</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="bg-orbs"></div>
+
+    <!-- Login Screen -->
+    <div id="login-view" class="login-overlay">
+        <div class="card form-card login-box">
+            <div class="logo" style="justify-content: center; margin-bottom: 1.5rem;">
+                <span class="logo-icon"><i class="fa-solid fa-p"></i></span>
+                <span class="logo-text">ParkSpace</span>
+            </div>
+            <h2 style="text-align: center; margin-bottom: 0.5rem;">Terminal Login</h2>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" class="form-control" placeholder="e.g. admin" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
+                </div>
+                <div id="login-error" style="color: #fca5a5; display: none; margin-bottom: 1rem; text-align: center;">
+                </div>
+                <button type="submit" class="btn btn-primary full-width">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="app-container" class="app-container" style="display: none;">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon"><i class="fa-solid fa-p"></i></span>
+                    <span class="logo-text">ParkSpace</span>
+                </div>
+            </div>
+            <div class="sidebar-menu-title">MAIN MENU</div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-view="dashboard">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-view="park-vehicle">
+                    <i class="fa-solid fa-car"></i>
+                    <span>Park Vehicle</span>
+                </a>
+                <a href="#" class="nav-item" data-view="slots-view">
+                    <i class="fa-solid fa-layer-group"></i>
+                    <span>Slots & Checkout</span>
+                </a>
+                <a href="#" class="nav-item" data-view="revenue-view">
+                    <i class="fa-solid fa-wallet"></i>
+                    <span>Revenue & Reset</span>
+                </a>
+                <a href="#" class="nav-item" data-view="history-view">
+                    <i class="fa-regular fa-calendar"></i>
+                    <span>History By Date</span>
+                </a>
+                <a href="#" class="nav-item" data-view="feedback-list">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span>Feedback Records</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="feedback-promo">
+                    <h5>Feedback</h5>
+                    <p>Help us improve your experience.</p>
+                    <button class="btn-feedback" onclick="switchView('feedback-view')">
+                        <i class="fa-solid fa-comment-dots"></i> Share Thoughts
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Topbar -->
+            <header class="topbar">
+                <div class="date-display">
+                    <i class="fa-regular fa-clock"></i>
+                    <span id="current-date">Date</span>
+                </div>
+                <div class="user-profile">
+                    <div class="avatar"><i class="fa-solid fa-user"></i></div>
+                    <div class="user-info">
+                        <div class="user-name" id="user-profile-name">Username</div>
+                        <div class="user-role" id="user-profile-role">Role</div>
+                    </div>
+                    <button class="btn"
+                        style="background: transparent; color: var(--text-muted); border: 1px solid var(--border); margin-left: 10px; padding: 8px;"
+                        onclick="handleLogout()" title="Sign Out">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </div>
+            </header>
+
+            <div class="dashboard-content" id="main-container">
+
+                <!-- VIEW 0: Dashboard (Overview) -->
+                <div id="view-dashboard" class="app-view active">
+                    <div class="hero-card">
+                        <h1>Park Space Control</h1>
+                        <p> Total Capacity:
+                            10 Slots.</p>
+                        <div class="hero-actions">
+                            <button class="btn btn-primary" onclick="switchView('park-vehicle')">Park New
+                                Vehicle</button>
+                            <button class="btn btn-secondary" onclick="switchView('slots-view')">View Slots
+                                Data</button>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon text-cyan"><i class="fa-solid fa-calendar-check"></i></div>
+                            <div class="stat-label">Available Slots</div>
+                            <div class="stat-value" id="dash-available">10</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon text-pink"><i class="fa-solid fa-car-side"></i></div>
+                            <div class="stat-label">Occupied Slots</div>
+                            <div class="stat-value" id="dash-occupied">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon text-purple"><i class="fa-solid fa-warehouse"></i></div>
+                            <div class="stat-label">Total Vehicles (Today)</div>
+                            <div class="stat-value" id="dash-total">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 1: Park Vehicle -->
+                <div id="view-park-vehicle" class="app-view hidden">
+                    <div class="card form-card">
+                        <h2><i class="fa-solid fa-plus-circle text-cyan"></i> Park a New Vehicle</h2>
+                        <form id="park-form" onsubmit="handleParkVehicle(event)">
+                            <div class="form-group">
+                                <label for="vehicle-type">Vehicle Type</label>
+                                <select id="vehicle-type" class="form-control" required>
+                                    <option value="Car">Car</option>
+                                    <option value="Bike">Bike</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="plate-number">License Plate Number</label>
+                                <input type="text" id="plate-number" class="form-control" required
+                                    placeholder="e.g. ABC 1234">
+                            </div>
+                            <div class="form-group">
+                                <label for="owner-name">Owner Name</label>
+                                <input type="text" id="owner-name" class="form-control" required
+                                    placeholder="e.g. John Doe">
+                            </div>
+                            <div class="form-group">
+                                <label for="reserved-status">Is this a Reserved slot?</label>
+                                <select id="reserved-status" class="form-control" required>
+                                    <option value="0">No (Normal Rate - 40 Rs/hr)</option>
+                                    <option value="1">Yes (Reserved Rate - 100 Rs/hr)</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary full-width">Register Vehicle</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- VIEW 2-4: Slots & Checkout -->
+                <div id="view-slots-view" class="app-view hidden">
+                    <div class="card">
+                        <h2><i class="fa-solid fa-layer-group text-pink"></i> Current Occupied Slots</h2>
+                        <p class="subtitle" id="slots-status">Available: 10 | Occupied: 0</p>
+                        <p class="subtitle text-cyan" id="slots-available-list"></p>
+
+                        <div class="table-responsive mt-4">
+                            <table class="data-table" id="occupied-table">
+                                <thead>
+                                    <tr>
+                                        <th>Slot</th>
+                                        <th>Plate Number</th>
+                                        <th>Owner</th>
+                                        <th>Type</th>
+                                        <th>Reserved</th>
+                                        <th>Entry Time</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Checkout Modal Area -->
+                    <div id="checkout-panel" class="card hidden mt-4">
+                        <h2><i class="fa-solid fa-file-invoice-dollar text-primary"></i> Checkout Process</h2>
+                        <div class="checkout-details" id="checkout-details">
+                            <!-- Details injected via JS -->
+                        </div>
+                        <button class="btn btn-primary" onclick="confirmCheckout()" id="confirm-checkout-btn">Confirm
+                            Payment & Checkout</button>
+                        <button class="btn btn-secondary" onclick="cancelCheckout()">Cancel</button>
+                    </div>
+                </div>
+
+                <!-- VIEW 6-7: Revenue & Reset -->
+                <div id="view-revenue-view" class="app-view hidden">
+                    <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 24px;">
+                        <div class="stat-card">
+                            <div class="stat-icon text-cyan"><i class="fa-solid fa-wallet"></i></div>
+                            <div class="stat-label">Total Revenue</div>
+                            <div class="stat-value text-cyan" id="rev-total">Rs 0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon text-pink"><i class="fa-solid fa-money-bill-wave"></i></div>
+                            <div class="stat-label">From Normal Vehicles</div>
+                            <div class="stat-value text-pink" id="rev-normal">Rs 0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon text-purple"><i class="fa-solid fa-gem"></i></div>
+                            <div class="stat-label">From Reserved Vehicles</div>
+                            <div class="stat-value text-purple" id="rev-reserved">Rs 0</div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="text-align: center; margin-bottom: 24px;">
+                        <div class="stat-label" style="font-size: 1.1rem; color: var(--text-primary); margin-bottom: 8px;">Total Revenue Till Now (All-Time)</div>
+                        <div class="stat-value" id="rev-all-time" style="color: #10b981; font-size: 3.5rem; text-shadow: 0 0 30px rgba(16, 185, 129, 0.4);">Rs 0</div>
+                        <p style="margin-top: 10px; font-size: 0.85rem; opacity: 0.7; color: var(--text-secondary);">
+                            
+                        </p>
+                    </div>
+
+                    <div class="card" style="text-align: center;">
+                        <button class="btn btn-secondary" onclick="resetRevenue()"
+                            style="padding: 15px 30px; font-size: 1.1rem;">
+                            <i class="fa-solid fa-rotate-right"></i> Reset End of Day Revenue
+                        </button>
+                    </div>
+                </div>
+
+                <!-- VIEW 8: History By Date -->
+                <div id="view-history-view" class="app-view hidden">
+                    <div class="card">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h2><i class="fa-regular fa-calendar-days text-purple"></i> Parking History</h2>
+                            <div style="display: flex; gap: 12px; align-items: center;">
+                                <!-- Search Plate -->
+                                <div class="search-wrapper">
+                                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                                    <input type="text" id="search-plate" class="form-control" placeholder="Search Plate..." 
+                                        onkeyup="filterHistory()" style="width: 180px; padding-left: 40px; height: 45px;">
+                                </div>
+                                <!-- Filter Date -->
+                                <div style="display: flex; gap: 8px; align-items: center;">
+                                    <label for="filter-date" style="font-size: 0.9rem; color: var(--text-secondary);">Date:</label>
+                                    <input type="date" id="filter-date" class="form-control" onchange="filterHistory()"
+                                        style="width: auto; height: 45px;">
+                                </div>
+                                <button class="btn btn-secondary" onclick="clearDateFilter()" style="height: 45px; padding: 0 15px;">Clear</button>
+                                <!-- Export CSV -->
+                                <button class="btn btn-primary" onclick="exportToCSV()" title="Download CSV Report" style="height: 45px;">
+                                    <i class="fa-solid fa-file-csv"></i> Export CSV
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="data-table" id="history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Plate Number</th>
+                                        <th>Owner</th>
+                                        <th>Type</th>
+                                        <th>Entry</th>
+                                        <th>Exit</th>
+                                        <th>Duration</th>
+                                        <th>Paid</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 9: Feedback -->
+                <div id="view-feedback-view" class="app-view hidden">
+                    <div class="card form-card">
+                        <h2><i class="fa-solid fa-comment-dots text-purple"></i> Share Your Feedback</h2>
+                        <p class="subtitle" style="margin-bottom: 30px;">Help us make ParkSpace better for everyone.</p>
+                        
+                        <form id="feedback-form" onsubmit="handleFeedbackSubmit(event)">
+                            <div class="form-group">
+                                <label>How would you rate your experience?</label>
+                                <div class="rating-stars" style="display: flex; gap: 15px; font-size: 1.5rem; margin-bottom: 20px;">
+                                    <i class="fa-regular fa-star star-rating" data-value="1" onclick="setRating(1)"></i>
+                                    <i class="fa-regular fa-star star-rating" data-value="2" onclick="setRating(2)"></i>
+                                    <i class="fa-regular fa-star star-rating" data-value="3" onclick="setRating(3)"></i>
+                                    <i class="fa-regular fa-star star-rating" data-value="4" onclick="setRating(4)"></i>
+                                    <i class="fa-regular fa-star star-rating" data-value="5" onclick="setRating(5)"></i>
+                                </div>
+                                <input type="hidden" id="feedback-rating" value="0" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="feedback-message">What can we improve?</label>
+                                <textarea id="feedback-message" class="form-control" rows="5" placeholder="Share your suggestions, complaints, or compliments..." required></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary full-width">
+                                <i class="fa-solid fa-paper-plane"></i> Submit Feedback
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- VIEW 10: Feedback List (Admin) -->
+                <div id="view-feedback-list" class="app-view hidden">
+                    <div class="card">
+                        <h2><i class="fa-solid fa-list-check text-purple"></i> User Feedback Records</h2>
+                        <div class="table-responsive">
+                            <table class="data-table" id="feedback-table">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Rating</th>
+                                        <th>Message</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

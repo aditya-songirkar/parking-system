@@ -1,0 +1,9 @@
+node_modules
+*.exe
+parking_app
+parking_data.txt
+.git
+Jenkinsfile
+k8s
+test
+*.md

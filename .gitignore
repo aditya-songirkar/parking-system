@@ -1,0 +1,4 @@
+node_modules/
+*.exe
+parking_app
+parking_data.txt
