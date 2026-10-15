@@ -28,7 +28,7 @@ spec:
         fsGroup: 1000    # lets the non-root "node" user write to /data
       containers:
         - name: parking-app
-          image: YOUR_DOCKERHUB_USER/parking-app:latest   # Jenkins replaces the tag on each build
+          image: songirkar/parking-app:latest   # Jenkins replaces the tag on each build
           ports:
             - containerPort: 3000
           readinessProbe:
