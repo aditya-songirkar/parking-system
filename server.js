@@ -35,7 +35,11 @@ app.get('/api/health', (req, res) => {
 // Helper function to safely execute the C++ CLI
 function runCppBackend(args) {
     return new Promise((resolve, reject) => {
-        execFile(EXEC_PATH, args, { cwd: DATA_DIR }, (error, stdout, stderr) => {
+                 // If PARKING_BIN is a .js file (used by the tests), run it with Node itself.
+        const isJs = EXEC_PATH.endsWith('.js');
+        const file = isJs ? process.execPath : EXEC_PATH;
+        const fileArgs = isJs ? [EXEC_PATH, ...args] : args;
+        execFile(file, fileArgs, { cwd: DATA_DIR }, (error, stdout, stderr) => {
             if (error) {
                 console.error("Backend Error:", stderr || error.message);
                 return reject(error);

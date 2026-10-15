@@ -7,13 +7,12 @@ const path = require('path');
 
 // A tiny stand-in for the C++ program so the tests need no compiler.
 // It prints its arguments back as JSON, which lets us check what Node sends.
+// It is a Node script, so it runs the same on Windows and Linux.
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'parking-test-'));
-const stub = path.join(tmp, 'fake_backend.sh');
+const stub = path.join(tmp, 'fake_backend.js');
 fs.writeFileSync(
     stub,
-    '#!/bin/sh\n' +
-    'printf \'{"success": true, "args": ["%s"]}\\n\' "$(echo "$*" | sed \'s/ /","/g\')"\n',
-    { mode: 0o755 }
+    "console.log(JSON.stringify({ success: true, args: process.argv.slice(2) }));\n"
 );
 process.env.PARKING_BIN = stub;
 process.env.DATA_DIR = tmp;

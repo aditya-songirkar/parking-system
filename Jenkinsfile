@@ -52,7 +52,7 @@ pipeline {
         stage('Verification') {
             steps {
                 sh 'kubectl get pods,deployments,services'
-                sh 'curl -fsS --retry 5 --retry-delay 3 http://$(minikube ip):30080/api/health'
+                sh 'curl -fsS --retry 5 --retry-delay 3 http://$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[0].address}"):30080/api/health'
             }
         }
     }
