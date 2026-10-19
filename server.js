@@ -29,7 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Health check used by Kubernetes probes and the pipeline's Verification stage
 app.get('/api/health', (req, res) => {
-    res.json({ success: true, message: 'Backend server is running' });
+    res.json({ success: true, message: 'Backend server is running -version 2' });
 });
 
 // Helper function to safely execute the C++ CLI
